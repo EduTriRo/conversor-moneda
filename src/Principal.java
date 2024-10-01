@@ -1,5 +1,7 @@
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +21,8 @@ public class Principal {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
         numberFormat.setMinimumFractionDigits(2);
         numberFormat.setMaximumFractionDigits(2);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
         Map<String, String> todasLasMonedas = new TreeMap<>(MonedaInfo.obtenerMonedasValidas());
 
@@ -90,13 +94,15 @@ public class Principal {
                 String nombreMonedaBase = todasLasMonedas.get(monedaBase);
                 String nombreMonedaDestino = todasLasMonedas.get(monedaDestino);
 
+                String marcaDeTiempo = LocalDateTime.now().format(formatter);
+
                 System.out.printf("La cantidad de %s %s (%s) equivale a %s %s (%s)\n",
                         numberFormat.format(cantidad), monedaBase, nombreMonedaBase,
                         numberFormat.format(resultado), monedaDestino, nombreMonedaDestino);
                 printDivider();
 
-                String busqueda = String.format("%s %s (%s) -> %s %s (%s)",
-                        numberFormat.format(cantidad), monedaBase, nombreMonedaBase,
+                String busqueda = String.format("[%s] %s %s (%s) -> %s %s (%s)",
+                        marcaDeTiempo, numberFormat.format(cantidad), monedaBase, nombreMonedaBase,
                         numberFormat.format(resultado), monedaDestino, nombreMonedaDestino);
                 historialDeBusquedas.add(busqueda);
 
@@ -116,7 +122,6 @@ public class Principal {
         } catch (IOException e) {
             System.out.println("Error al guardar el historial en archivo JSON: " + e.getMessage());
         }
-
         printDivider();
         System.out.println("¡Gracias por usar nuestro conversor de monedas!");
         System.out.println("Los datos de las tasas de cambio fueron proporcionados por ExchangeRate-API.");
@@ -124,7 +129,6 @@ public class Principal {
         printDivider();
     }
 
-    // Método para imprimir la línea de división
     public static void printDivider() {
         System.out.println("------------------------------------------------------------------------------");
     }
